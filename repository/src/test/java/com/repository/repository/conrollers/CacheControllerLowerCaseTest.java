@@ -33,24 +33,18 @@ class CacheControllerLowerCaseTest
     @Test
     void hasDataForQuery()
     {
-        final String template = "Ви";
+        final String template0 = "А";
+        List<EmployeeDto> employeesA = prepareData().stream().filter(employeeDto -> {
 
-        assertThat(cacheControllerLowerCase.hasDataForQuery(template)).isEqualTo(false);
+            return employeeDto.getName().toLowerCase().startsWith(template0.toLowerCase()) ||
+                    employeeDto.getLastName().toLowerCase().startsWith(template0.toLowerCase()) ||
+                    employeeDto.getPatronymic().toLowerCase().startsWith(template0.toLowerCase());}).toList();
 
-        List<EmployeeDto> employees = prepareData();
+        cacheControllerLowerCase.refresh(template0, employeesA);
 
-        cacheControllerLowerCase.refresh("", employees);
-
-        assertThat(cacheControllerLowerCase.hasDataForQuery(template)).isEqualTo(true);
-        assertThat(cacheControllerLowerCase.hasDataForQuery("Вик")).isEqualTo(true);
-
-        List<EmployeeDto> templateEmployee = cacheControllerLowerCase.extractDataForQuery(template.toLowerCase());
-
-        cacheControllerLowerCase.refresh(template, templateEmployee);
-
-        final String failTemplate = "Mc";
-
-        assertThat(cacheControllerLowerCase.hasDataForQuery(failTemplate.toLowerCase())).isEqualTo(false);
+        assertThat(cacheControllerLowerCase.hasDataForQuery(template0)).isEqualTo(true);
+        assertThat(cacheControllerLowerCase.hasDataForQuery("В")).isEqualTo(false);
+        assertThat(cacheControllerLowerCase.hasDataForQuery("Ал")).isEqualTo(true);
     }
 
     @Test
