@@ -62,7 +62,7 @@ public class Controller
     }
 
     @GetMapping("/findByDepartment")
-    List<EmployeeDto> findByDepartment(@RequestBody Department department)
+    public List<EmployeeDto> findByDepartment(@RequestBody Department department)
     {
         List<Employee> employees = userRepository.findByDepartment(department);
         return employees.stream().map(employee -> new EmployeeDto(employee)).toList();
