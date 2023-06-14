@@ -14,11 +14,11 @@ import java.util.List;
 @Repository("userRepository")
 public interface UserRepository extends JpaRepository<Employee, Integer>
 {
-    @Query(value = "SELECT u FROM Employee u WHERE u.room = :room")
-    List<Employee> findByRoom(@Param("room") Room room);
+    @Query(value = "SELECT u FROM Employee u WHERE u.room.id = :roomId")
+    List<Employee> findByRoomId(@Param("roomId") int roomId);
 
-    @Query(value = "SELECT u FROM Employee u Where u.department = :dept")
-    List<Employee> findByDepartment(@Param("dept") Department department);
+    @Query(value = "SELECT u FROM Employee u Where u.department.id = :deptId")
+    List<Employee> findByDepartmentId(@Param("deptId") int departmentId);
 
     @Query(value = "SELECT u FROM Employee u WHERE LOWER(u.lastName) LIKE :template%" +
             " OR LOWER(u.name) LIKE :template%" +

@@ -1,6 +1,8 @@
 package com.repository.repository.conrollers;
 
+import com.repository.repository.dto.DepartmentDto;
 import com.repository.repository.dto.EmployeeDto;
+import com.repository.repository.dto.RoomDto;
 import com.repository.repository.entities.Department;
 import com.repository.repository.entities.Employee;
 import com.repository.repository.entities.Room;
@@ -39,23 +41,22 @@ class ControllerTest
     @Test
     void findEmployeesByRoomTest()
     {
-        Map<Room, Integer> roomAndCountPeopleHere = new HashMap<>();
+        Map<RoomDto, Integer> roomAndCountPeopleHere = new HashMap<>();
 
-        roomAndCountPeopleHere.put(new Room(1, "101"), 5);
-        roomAndCountPeopleHere.put(new Room(2, "102"), 3);
-        roomAndCountPeopleHere.put(new Room(3, "103a"), 7);
-        roomAndCountPeopleHere.put(new Room(4, "104a"), 2);
+        roomAndCountPeopleHere.put(new RoomDto(1), 5);
+        roomAndCountPeopleHere.put(new RoomDto(2), 3);
+        roomAndCountPeopleHere.put(new RoomDto(3), 7);
+        roomAndCountPeopleHere.put(new RoomDto(4), 2);
 
-        roomAndCountPeopleHere.forEach((room, countPeople)->{assertThat(restController.findByRoom(room)).hasSize(countPeople);});
+        roomAndCountPeopleHere.forEach((room, countPeople)->{assertThat(restController.findByRoomId(room.getId())).hasSize(countPeople);});
     }
 
     @Test
     void findEmployeesByDepartmentTest()
     {
-        Department department = new Department();
-        department.setId(1);
+        DepartmentDto department = new DepartmentDto(1);
 
-        List<EmployeeDto> employees = restController.findByDepartment(department);
+        List<EmployeeDto> employees = restController.findByDepartmentId(department.getId());
 
         assertThat(employees).hasSize(5);
     }

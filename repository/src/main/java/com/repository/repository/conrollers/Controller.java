@@ -1,16 +1,15 @@
 package com.repository.repository.conrollers;
 
 import com.repository.repository.dto.EmployeeDto;
-import com.repository.repository.entities.Department;
 import com.repository.repository.entities.Employee;
-import com.repository.repository.entities.Room;
 import com.repository.repository.repositories.UserRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.logging.Logger;
 
-@RestController
+@Service
 public class Controller
 {
     CacheControllerLowerCase cacheControllerLowerCase;
@@ -27,14 +26,12 @@ public class Controller
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/allEmployees")
     public List<EmployeeDto> getAllEmployees()
     {
         List<Employee> employees = userRepository.findAll();
         return employees.stream().map(employee -> new EmployeeDto(employee)).toList();
     }
 
-    @GetMapping("/findByTemplate")
     public List<EmployeeDto> findByTemplate(@RequestParam String template)
     {
         List<EmployeeDto> employees;
@@ -54,17 +51,15 @@ public class Controller
         return employees;
     }
 
-    @GetMapping("/findByRoom")
-    public List<EmployeeDto> findByRoom(@RequestBody Room room)
+    public List<EmployeeDto> findByRoomId(int roomId)
     {
-        List<Employee> employees = userRepository.findByRoom(room);
+        List<Employee> employees = userRepository.findByRoomId(roomId);
         return employees.stream().map(employee -> new EmployeeDto(employee)).toList();
     }
 
-    @GetMapping("/findByDepartment")
-    public List<EmployeeDto> findByDepartment(@RequestBody Department department)
+    public List<EmployeeDto> findByDepartmentId(int departmentId)
     {
-        List<Employee> employees = userRepository.findByDepartment(department);
+        List<Employee> employees = userRepository.findByDepartmentId(departmentId);
         return employees.stream().map(employee -> new EmployeeDto(employee)).toList();
     }
 }

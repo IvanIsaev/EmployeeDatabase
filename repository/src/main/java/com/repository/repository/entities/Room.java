@@ -1,6 +1,7 @@
 package com.repository.repository.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.repository.repository.dto.RoomDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,5 +38,10 @@ public class Room
     {
         this.id = id;
         this.room = room;
+    }
+
+    public Room(RoomDto roomDto)
+    {
+        this.id = roomDto.getId();
     }
 }

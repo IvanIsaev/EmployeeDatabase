@@ -1,11 +1,14 @@
 package com.repository.repository.services;
 
 import com.repository.repository.conrollers.Controller;
+import com.repository.repository.dto.DepartmentDto;
 import com.repository.repository.dto.EmployeeDto;
+import com.repository.repository.dto.RoomDto;
 import com.repository.repository.entities.Department;
 import com.repository.repository.entities.Room;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -15,6 +18,7 @@ import java.util.List;
 
 @Service
 @EnableKafka
+@ConditionalOnProperty(value = "kafka.enable", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerService
 {
     private Controller databaseRestController;
@@ -45,17 +49,17 @@ public class KafkaConsumerService
 
     @KafkaListener(topics = "${find.by.room.topic.name}", groupId = "${find.by.room.group-id}",
             containerFactory = "findByRoomContainerFactory")
-    public void findByRoomListener(ConsumerRecord<Long, Room> record)
+    public void findByRoomListener(ConsumerRecord<Long, RoomDto> record)
     {
-        List<EmployeeDto> employeeByRoom = databaseRestController.findByRoom(record.value());
+        List<EmployeeDto> employeeByRoom = databaseRestController.findByRoomId(record.value().getId());
         sendAnswer(employeeByRoom);
     }
 
     @KafkaListener(topics = "${find.by.department.topic.name}", groupId = "${find.by.department.group-id}",
             containerFactory = "findByDepartmentContainerFactory")
-    public void findByDepartment(ConsumerRecord<Long, Department> record)
+    public void findByDepartment(ConsumerRecord<Long, DepartmentDto> record)
     {
-        List<EmployeeDto> employeeByDepartment = databaseRestController.findByDepartment(record.value());
+        List<EmployeeDto> employeeByDepartment = databaseRestController.findByDepartmentId(record.value().getId());
         sendAnswer(employeeByDepartment);
     }
 

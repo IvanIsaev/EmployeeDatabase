@@ -1,5 +1,7 @@
 package com.repository.repository.config;
 
+import com.repository.repository.dto.DepartmentDto;
+import com.repository.repository.dto.RoomDto;
 import com.repository.repository.entities.Department;
 import com.repository.repository.entities.Room;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -7,6 +9,7 @@ import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.VoidDeserializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -20,6 +23,7 @@ import java.util.Map;
 
 @Configuration
 @PropertySource("classpath:kafka.properties")
+@ConditionalOnProperty(value = "kafka.enable", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerConfig
 {
     @Value("${spring.kafka.bootstrap-servers}")
@@ -37,7 +41,7 @@ public class KafkaConsumerConfig
     @Value("${find.by.department.group-id}")
     private String findByDepartmentGroupId;
 
-//      ---------------------------------
+    //-------------------------------------------------------------
 
     @Bean
     public ConsumerFactory<Long, Void> findAllConsumerFactory()
@@ -62,7 +66,8 @@ public class KafkaConsumerConfig
         return factory;
     }
 
-//      ---------------------------------
+    //-------------------------------------------------------------
+
     @Bean
     public ConsumerFactory<Long, String> findByTemplateConsumerFactory()
     {
@@ -86,50 +91,51 @@ public class KafkaConsumerConfig
         return factory;
     }
 
-//      ------------------------------------
+    //-------------------------------------------------------------
+
     @Bean
-    public ConsumerFactory<Long, Room> findByRoomConsumerFactory()
+    public ConsumerFactory<Long, RoomDto> findByRoomConsumerFactory()
     {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, findByRoomGroupId);
-        return new DefaultKafkaConsumerFactory<>(config, new LongDeserializer(), new JsonDeserializer<>(Room.class));
+        return new DefaultKafkaConsumerFactory<>(config, new LongDeserializer(), new JsonDeserializer<>(RoomDto.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<Long, Room> findByRoomContainerFactory()
+    public ConcurrentKafkaListenerContainerFactory<Long, RoomDto> findByRoomContainerFactory()
     {
-        ConcurrentKafkaListenerContainerFactory<Long, Room> factory =
+        ConcurrentKafkaListenerContainerFactory<Long, RoomDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(findByRoomConsumerFactory());
         return factory;
     }
-//      ----------------------------------
+
+    //-------------------------------------------------------------
 
     @Bean
-    public ConsumerFactory<Long, Department> findByDepartmentConsumerFactory()
+    public ConsumerFactory<Long, DepartmentDto> findByDepartmentConsumerFactory()
     {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, findByRoomGroupId);
-        return new DefaultKafkaConsumerFactory<>(config, new LongDeserializer(), new JsonDeserializer<>(Department.class));
+        return new DefaultKafkaConsumerFactory<>(config, new LongDeserializer(), new JsonDeserializer<>(DepartmentDto.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<Long, Department> findByDepartmentContainerFactory()
+    public ConcurrentKafkaListenerContainerFactory<Long, DepartmentDto> findByDepartmentContainerFactory()
     {
-        ConcurrentKafkaListenerContainerFactory<Long, Department> factory =
+        ConcurrentKafkaListenerContainerFactory<Long, DepartmentDto> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(findByDepartmentConsumerFactory());
         return factory;
     }
 
-
-//      --------------------------------------
+    //-------------------------------------------------------------
 }
 
 
