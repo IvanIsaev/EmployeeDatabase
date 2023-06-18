@@ -1,8 +1,8 @@
 package com.repository.repository.repositories;
 
-import com.repository.repository.dto.DepartmentDto;
-import com.repository.repository.dto.RoomDto;
 import com.repository.repository.entities.*;
+import dto.DepartmentDto;
+import dto.RoomDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.repository.repository.dto;
+package dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

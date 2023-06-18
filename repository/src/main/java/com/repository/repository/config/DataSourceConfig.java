@@ -1,6 +1,7 @@
 package com.repository.repository.config;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,14 +19,14 @@ import java.util.Properties;
 
 @Configuration
 @EnableJpaRepositories(basePackages = { "com.repository.repository.repositories"})
-@PropertySource("classpath:database.properties")
+@PropertySource("classpath:${property-prefix}/database.properties")
 @EnableTransactionManagement
 public class DataSourceConfig
 {
     @Autowired
     private Environment env;
 
-    @Bean
+   @Bean
     public DataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));

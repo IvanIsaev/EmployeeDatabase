@@ -1,6 +1,6 @@
 package com.repository.repository.conrollers;
 
-import com.repository.repository.dto.EmployeeDto;
+import dto.EmployeeDto;
 import org.antlr.v4.runtime.misc.Pair;
 
 import java.util.List;

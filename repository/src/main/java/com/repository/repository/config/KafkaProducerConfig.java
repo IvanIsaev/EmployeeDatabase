@@ -1,10 +1,8 @@
 package com.repository.repository.config;
 
-import com.repository.repository.dto.EmployeeDto;
-import org.apache.kafka.clients.producer.Producer;
+import dto.EmployeeDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-@PropertySource("classpath:kafka.properties")
+@PropertySource("classpath:${property-prefix}/kafka.properties")
 @ConditionalOnProperty(value = "kafka.enable", havingValue = "true", matchIfMissing = true)
 public class KafkaProducerConfig
 {

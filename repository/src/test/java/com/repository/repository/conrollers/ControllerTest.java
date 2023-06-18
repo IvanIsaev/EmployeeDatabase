@@ -1,11 +1,11 @@
 package com.repository.repository.conrollers;
 
-import com.repository.repository.dto.DepartmentDto;
-import com.repository.repository.dto.EmployeeDto;
-import com.repository.repository.dto.RoomDto;
 import com.repository.repository.entities.Department;
 import com.repository.repository.entities.Employee;
 import com.repository.repository.entities.Room;
+import dto.DepartmentDto;
+import dto.EmployeeDto;
+import dto.RoomDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

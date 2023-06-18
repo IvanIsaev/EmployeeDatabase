@@ -1,11 +1,9 @@
 package com.repository.repository.services;
 
 import com.repository.repository.conrollers.Controller;
-import com.repository.repository.dto.DepartmentDto;
-import com.repository.repository.dto.EmployeeDto;
-import com.repository.repository.dto.RoomDto;
-import com.repository.repository.entities.Department;
-import com.repository.repository.entities.Room;
+import dto.DepartmentDto;
+import dto.EmployeeDto;
+import dto.RoomDto;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

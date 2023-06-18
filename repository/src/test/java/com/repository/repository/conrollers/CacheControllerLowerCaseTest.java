@@ -1,6 +1,6 @@
 package com.repository.repository.conrollers;
 
-import com.repository.repository.dto.EmployeeDto;
+import dto.EmployeeDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;

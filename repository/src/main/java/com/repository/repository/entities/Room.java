@@ -1,7 +1,7 @@
 package com.repository.repository.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.repository.repository.dto.RoomDto;
+import dto.RoomDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

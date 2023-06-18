@@ -1,9 +1,7 @@
 package com.repository.repository.config;
 
-import com.repository.repository.dto.DepartmentDto;
-import com.repository.repository.dto.RoomDto;
-import com.repository.repository.entities.Department;
-import com.repository.repository.entities.Room;
+import dto.DepartmentDto;
+import dto.RoomDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -22,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@PropertySource("classpath:kafka.properties")
+@PropertySource("classpath:${property-prefix}/kafka.properties")
 @ConditionalOnProperty(value = "kafka.enable", havingValue = "true", matchIfMissing = true)
 public class KafkaConsumerConfig
 {
