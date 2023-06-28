@@ -20,12 +20,12 @@ import java.util.List;
 public class KafkaConsumerService
 {
     private Controller databaseRestController;
-    private KafkaTemplate<Long, List<EmployeeDto> > employeeKafkaTemplate;
+    private KafkaTemplate<Long, List<EmployeeDto>> employeeKafkaTemplate;
 
     @Value("${answer.employees.topic.name}")
     private String answerTopicName;
 
-    public KafkaConsumerService(Controller databaseRestController, KafkaTemplate<Long, List<EmployeeDto> > employeeKafkaTemplate)
+    public KafkaConsumerService(Controller databaseRestController, KafkaTemplate<Long, List<EmployeeDto>> employeeKafkaTemplate)
     {
         this.databaseRestController = databaseRestController;
         this.employeeKafkaTemplate = employeeKafkaTemplate;
