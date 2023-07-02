@@ -1,9 +1,7 @@
 package com.gate.gate.config;
 
 import dto.DepartmentDto;
-import dto.EmployeeDto;
 import dto.RoomDto;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +9,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
@@ -42,19 +38,20 @@ public class KafkaProducerConfig
     //-------------------------------------------------------------
 
     @Bean
-    public ProducerFactory<Long, Void> findAllProducerFactory()
+    public ProducerFactory<String, Void> findAllProducerFactory()
     {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, VoidSerializer.class);
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 
         return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean(name = "findAll")
-    public KafkaTemplate<Long, Void > kafkaTemplateFindAll()
+    public KafkaTemplate<String, Void > kafkaTemplateFindAll()
     {
         return new KafkaTemplate<>(findAllProducerFactory());
     }
@@ -62,19 +59,20 @@ public class KafkaProducerConfig
     //-------------------------------------------------------------
 
     @Bean
-    public ProducerFactory<Long, String> findByTemplateProducerFactory()
+    public ProducerFactory<String, String> findByTemplateProducerFactory()
     {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
 
         return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean(name = "findByTemplate")
-    public KafkaTemplate<Long, String > kafkaTemplateFindByTemplate()
+    public KafkaTemplate<String, String > kafkaTemplateFindByTemplate()
     {
         return new KafkaTemplate<>(findByTemplateProducerFactory());
     }
@@ -82,16 +80,18 @@ public class KafkaProducerConfig
     //-------------------------------------------------------------
 
     @Bean
-    public ProducerFactory<Long, RoomDto> findByRoomProducerFactory()
+    public ProducerFactory<String, RoomDto> findByRoomProducerFactory()
     {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-        return new DefaultKafkaProducerFactory<>(config, new LongSerializer(), new JsonSerializer<RoomDto>());
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+
+        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<RoomDto>());
     }
 
     @Bean(name = "findByRoom")
-    public KafkaTemplate<Long, RoomDto > kafkaTemplateFindByRoom()
+    public KafkaTemplate<String, RoomDto > kafkaTemplateFindByRoom()
     {
         return new KafkaTemplate<>(findByRoomProducerFactory());
     }
@@ -99,16 +99,18 @@ public class KafkaProducerConfig
     //-------------------------------------------------------------
 
     @Bean
-    public ProducerFactory<Long, DepartmentDto> findByDepartmentProducerFactory()
+    public ProducerFactory<String, DepartmentDto> findByDepartmentProducerFactory()
     {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-        return new DefaultKafkaProducerFactory<>(config, new LongSerializer(), new JsonSerializer<DepartmentDto>());
+        config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true");
+
+        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<DepartmentDto>());
     }
 
     @Bean(name = "findByDepartment")
-    public KafkaTemplate<Long, DepartmentDto > kafkaTemplateFindByDepartment()
+    public KafkaTemplate<String, DepartmentDto > kafkaTemplateFindByDepartment()
     {
         return new KafkaTemplate<>(findByDepartmentProducerFactory());
     }

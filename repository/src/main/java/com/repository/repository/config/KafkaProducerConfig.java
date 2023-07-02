@@ -3,6 +3,7 @@ package com.repository.repository.config;
 import dto.EmployeeDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.LongSerializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -27,19 +28,19 @@ public class KafkaProducerConfig
     private String bootstrapServer;
 
     @Bean
-    public ProducerFactory<Long, List<EmployeeDto>> producerFactory()
+    public ProducerFactory<String, List<EmployeeDto>> producerFactory()
     {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer);
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class);
+        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
         return new DefaultKafkaProducerFactory<>(config);
     }
 
     @Bean
-    public KafkaTemplate<Long, List<EmployeeDto>> kafkaTemplate()
+    public KafkaTemplate<String, List<EmployeeDto>> kafkaTemplate()
     {
         return new KafkaTemplate<>(producerFactory());
     }

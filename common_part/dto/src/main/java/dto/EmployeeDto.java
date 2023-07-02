@@ -21,6 +21,16 @@ public class EmployeeDto
         this.patronymic = patronymic;
     }
 
+    @Override
+    public String toString()
+    {
+        return new StringBuilder()
+                .append(String.format("%s = %s ", "name", name))
+                .append(String.format("%s = %s ", "lastName", lastName))
+                .append(String.format("%s = %s ", "patronymic", patronymic))
+                .toString();
+    }
+
     private String name;
     private String lastName;
     private String patronymic;

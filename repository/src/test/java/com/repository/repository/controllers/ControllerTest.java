@@ -1,8 +1,5 @@
-package com.repository.repository.conrollers;
+package com.repository.repository.controllers;
 
-import com.repository.repository.entities.Department;
-import com.repository.repository.entities.Employee;
-import com.repository.repository.entities.Room;
 import dto.DepartmentDto;
 import dto.EmployeeDto;
 import dto.RoomDto;

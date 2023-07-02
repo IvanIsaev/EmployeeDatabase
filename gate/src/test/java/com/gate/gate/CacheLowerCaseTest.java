@@ -1,5 +1,6 @@
-package com.repository.repository.conrollers;
+package com.gate.gate;
 
+import com.gate.gate.controllers.CacheLowerCase;
 import dto.EmployeeDto;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-class CacheControllerLowerCaseTest
+class CacheLowerCaseTest
 {
     private List<EmployeeDto> prepareData()
     {
@@ -28,7 +29,7 @@ class CacheControllerLowerCaseTest
         return employees;
     }
 
-    CacheControllerLowerCase cacheControllerLowerCase = new CacheControllerLowerCase();
+    CacheLowerCase cacheLowerCase;
 
     @Test
     void hasDataForQuery()
@@ -40,11 +41,11 @@ class CacheControllerLowerCaseTest
                     employeeDto.getLastName().toLowerCase().startsWith(template0.toLowerCase()) ||
                     employeeDto.getPatronymic().toLowerCase().startsWith(template0.toLowerCase());}).toList();
 
-        cacheControllerLowerCase.refresh(template0, employeesA);
+        cacheLowerCase = new CacheLowerCase(template0, employeesA);
 
-        assertThat(cacheControllerLowerCase.hasDataForQuery(template0)).isEqualTo(true);
-        assertThat(cacheControllerLowerCase.hasDataForQuery("В")).isEqualTo(false);
-        assertThat(cacheControllerLowerCase.hasDataForQuery("Ал")).isEqualTo(true);
+        assertThat(cacheLowerCase.hasDataForQuery(template0)).isEqualTo(true);
+        assertThat(cacheLowerCase.hasDataForQuery("В")).isEqualTo(false);
+        assertThat(cacheLowerCase.hasDataForQuery("Ал")).isEqualTo(true);
     }
 
     @Test
@@ -52,8 +53,8 @@ class CacheControllerLowerCaseTest
     {
         final String template = "Ал";
         List<EmployeeDto> employees = prepareData();
-        cacheControllerLowerCase.refresh("", employees);
+        cacheLowerCase = new CacheLowerCase("", employees);
 
-        assertThat(cacheControllerLowerCase.extractDataForQuery(template.toLowerCase())).hasSize(2);
+        assertThat(cacheLowerCase.extractDataForQuery(template.toLowerCase())).hasSize(2);
     }
 }

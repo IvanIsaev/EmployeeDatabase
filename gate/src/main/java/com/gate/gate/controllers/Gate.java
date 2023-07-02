@@ -1,8 +1,12 @@
 package com.gate.gate.controllers;
 
-import com.gate.gate.services.KafkaListener;
+import com.gate.gate.exceptions.NoDataException;
+import com.gate.gate.services.KafkaConsumerService;
 import dto.DepartmentDto;
+import dto.EmployeeDto;
 import dto.RoomDto;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,71 +15,168 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class Gate
 {
     @Autowired
-    private KafkaTemplate<Long, Void > findAll;
+    private KafkaTemplate<String, Void > findAll;
     @Value("${find.all.topic.name}")
     private String findAllTopicName;
 
     @Autowired
-    private KafkaTemplate<Long, String > findByTemplate;
+    private KafkaTemplate<String, String > findByTemplate;
     @Value("${find.by.template.topic.name}")
     private String findByTemplateTopicName;
 
     @Autowired
-    private KafkaTemplate<Long, RoomDto > findByRoom;
+    private KafkaTemplate<String, RoomDto > findByRoom;
     @Value("${find.by.room.topic.name}")
     private String findByRoomTopicName;
 
     @Autowired
-    private KafkaTemplate<Long, DepartmentDto > findByDepartment;
+    private KafkaTemplate<String, DepartmentDto > findByDepartment;
     @Value("${find.by.department.topic.name}")
     private String findByDepartmentTopicName;
 
-    @Autowired
-    private KafkaListener listener;
+    private KafkaConsumerService listener;
+
+    CacheLowerCase cache;
+
+    Logger log;
+
+    public Gate(KafkaConsumerService listener)
+    {
+        this.listener = listener;
+        cache = new CacheLowerCase();
+        log = LogManager.getLogger(this.getClass());
+    }
 
     @GetMapping("/allEmployees")
-    public void findAll()
+    public void findAllEmployees()
     {
-        findAll.send(findAllTopicName, null);
+        final String threadName = Thread.currentThread().getName();
+
+        findAll.send(findAllTopicName, threadName, null);
         findAll.flush();
 
-        listener.receiveAll(Duration.ofSeconds(10000)).stream().forEach(employeeDto ->
-                System.out.println(employeeDto.getName() + " " + employeeDto.getLastName()));
+        List<EmployeeDto> answer = null;
+        try
+        {
+            answer = awaitData(threadName);
+        } catch (InterruptedException e)
+        {
+            throw new RuntimeException(e);
+            // Страничка с ошибкой
+        } catch (NoDataException e)
+        {
+            throw new RuntimeException(e);
+            // Страничка с ошибкой
+        }
+
+        printLog("findAllEmployees", answer);
     }
 
     @GetMapping("/findByTemplate")
     public void findByTemplate(@RequestParam String template)
     {
-        findByTemplate.send(findByTemplateTopicName, template);
-        findByTemplate.flush();
+        final String templateLowerCase = template.toLowerCase();
 
-        listener.receiveAll(Duration.ofSeconds(10000)).stream().forEach(employeeDto ->
-                System.out.println(employeeDto.getName() + " " + employeeDto.getLastName()));
+        List<EmployeeDto> answer = null;
+
+        if(cache.hasDataForQuery(templateLowerCase))
+        {
+            answer = cache.extractDataForQuery(templateLowerCase);
+            log.info("Data from cache");
+        }
+        else
+        {
+            final String threadName = Thread.currentThread().getName();
+            findByTemplate.send(findByTemplateTopicName, threadName, template);
+            findByTemplate.flush();
+
+            try
+            {
+                answer = awaitData(threadName);
+            } catch (InterruptedException e)
+            {
+                throw new RuntimeException(e);
+                // Страничка с ошибкой
+            } catch (NoDataException e)
+            {
+                throw new RuntimeException(e);
+                // Страничка с ошибкой
+            }
+
+            WeakReference<CacheLowerCase> wr = new WeakReference<>(cache);
+            cache = new CacheLowerCase(templateLowerCase, answer);
+        }
+
+        printLog("findByTemplate", answer);
     }
 
     @GetMapping("/findByRoom")
     public void findByRoom(@RequestBody RoomDto room)
     {
-        findByRoom.send(findByRoomTopicName, room);
+        final String threadName = Thread.currentThread().getName();
+
+        findByRoom.send(findByRoomTopicName, threadName, room);
         findByRoom.flush();
 
-        listener.receiveAll(Duration.ofSeconds(10000)).stream().forEach(employeeDto ->
-                System.out.println(employeeDto.getName() + " " + employeeDto.getLastName()));
+        List<EmployeeDto> answer = null;
+        try
+        {
+            answer = awaitData(threadName);
+        } catch (InterruptedException e)
+        {
+            throw new RuntimeException(e);
+            // Страничка с ошибкой
+        } catch (NoDataException e)
+        {
+            throw new RuntimeException(e);
+            // Страничка с ошибкой
+        }
+
+        printLog("findByRoom", answer);
     }
 
     @GetMapping("/findByDepartment")
     public void findByDepartment(@RequestBody DepartmentDto department)
     {
-        findByDepartment.send(findByDepartmentTopicName, department);
+        final String threadName = Thread.currentThread().getName();
+
+        findByDepartment.send(findByDepartmentTopicName, threadName, department);
         findByDepartment.flush();
 
-        listener.receiveAll(Duration.ofSeconds(10000)).stream().forEach(employeeDto ->
-                System.out.println(employeeDto.getName() + " " + employeeDto.getLastName()));
+        List<EmployeeDto> answer = null;
+        try
+        {
+            answer = awaitData(threadName);
+        } catch (InterruptedException e)
+        {
+            throw new RuntimeException(e);
+            // Страничка с ошибкой
+        } catch (NoDataException e)
+        {
+            throw new RuntimeException(e);
+            // Страничка с ошибкой
+        }
+
+        printLog("findByDepartment", answer);
+    }
+
+    private final List<EmployeeDto> awaitData(final String threadName) throws InterruptedException, NoDataException
+    {
+        listener.getCountDownLatch(threadName).await(10, TimeUnit.SECONDS);
+        return listener.getListData(threadName);
+    }
+
+    private void printLog(final String message, final List<EmployeeDto> employees)
+    {
+        log.info(message);
+        employees.forEach(employeeDto -> log.info(employeeDto.toString()));
     }
 }
